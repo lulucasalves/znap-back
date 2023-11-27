@@ -12,6 +12,11 @@
       "src": "categories",
       "methods": ["GET"],
       "dest": "./dist/server.js"
+    },
+    {
+      "src": "category",
+      "methods": ["GET", "POST", "PUT", "DELETE"],
+      "dest": "./dist/server.js"
     }
   ]
 }

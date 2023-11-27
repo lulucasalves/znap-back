@@ -1,6 +1,8 @@
 import * as restify from "restify";
-import { routes } from "./routes";
 import { createConnection } from "typeorm";
+
+import { typeorm } from "./typeorm";
+import { routes } from "./routes";
 
 export const server = restify.createServer({
   name: "Znap Server",
@@ -10,8 +12,8 @@ export const server = restify.createServer({
 server.use(restify.plugins.acceptParser(server.acceptable));
 server.use(restify.plugins.queryParser());
 server.use(restify.plugins.bodyParser());
-createConnection();
 
+createConnection(typeorm);
 routes(server);
 
 const PORT = process.env.PORT || 8080;
