@@ -1,13 +1,17 @@
+import * as restify from "restify";
+
 import {
   getProductCategoriesController,
-  postProductCategoriesController,
-  putProductCategoriesController,
+  postProductCategoryController,
+  putProductCategoryController,
+  getProductCategoryController,
+  deleteProductCategoryController,
 } from "../controllers";
-
-import * as restify from "restify";
 
 export function categoriesRouter(router: restify.Server) {
   router.get("/categories", getProductCategoriesController);
-  router.post("/category", postProductCategoriesController);
-  router.put("/category/:id", putProductCategoriesController);
+  router.get("/category/:id", getProductCategoryController);
+  router.post("/category", postProductCategoryController);
+  router.put("/category/:id", putProductCategoryController);
+  router.del("/category/:id", deleteProductCategoryController);
 }

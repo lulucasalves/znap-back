@@ -13,9 +13,6 @@ class Orders {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @Column({ type: "float" })
-  price!: string;
-
   @Column({ type: "int" })
   quantity!: string;
 

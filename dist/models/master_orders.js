@@ -14,6 +14,7 @@ const typeorm_1 = require("typeorm");
 const _1 = require(".");
 let MasterOrders = class MasterOrders {
     constructor() {
+        this.order_status = "active";
         this.updated_at = new Date();
     }
 };

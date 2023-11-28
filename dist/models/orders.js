@@ -23,10 +23,6 @@ __decorate([
     __metadata("design:type", String)
 ], Orders.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: "float" }),
-    __metadata("design:type", String)
-], Orders.prototype, "price", void 0);
-__decorate([
     (0, typeorm_1.Column)({ type: "int" }),
     __metadata("design:type", String)
 ], Orders.prototype, "quantity", void 0);

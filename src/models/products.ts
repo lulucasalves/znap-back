@@ -23,7 +23,7 @@ class Products {
   stock!: number;
 
   @Column({ type: "boolean" })
-  available!: boolean;
+  available: boolean = true;
 
   @Column({ type: "float" })
   weight!: number;

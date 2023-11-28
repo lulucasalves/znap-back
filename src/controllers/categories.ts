@@ -7,7 +7,7 @@ export async function getProductCategoriesController(
   res: Response,
   next: Next
 ) {
-  const { limit, page, order } = req.query;
+  const { limit, page, order, sort } = req.query;
 
   const limitInt = parseInt(limit);
   const currentInt = parseInt(page);
@@ -17,12 +17,19 @@ export async function getProductCategoriesController(
   const categories = await categoriesRepository.findAndCount({
     skip: (currentInt - 1) * limitInt,
     take: limitInt,
+    order: { [order ?? "created_at"]: sort ?? "DESC" },
   });
 
-  res.json(categories);
+  res.json({
+    data: categories[0],
+    count: categories[1],
+    page: currentInt,
+    limit: limitInt,
+    maxPages: Math.ceil(categories[1] / limitInt),
+  });
 }
 
-export async function postProductCategoriesController(
+export async function postProductCategoryController(
   req: Request,
   res: Response,
   next: Next
@@ -38,7 +45,39 @@ export async function postProductCategoriesController(
   res.json(createdCategory);
 }
 
-export async function putProductCategoriesController(
+export async function getProductCategoryController(
+  req: Request,
+  res: Response,
+  next: Next
+) {
+  const { id } = req.params;
+
+  const categoriesRepository = getRepository(ProductCategories);
+
+  const category = await categoriesRepository.findOne({
+    where: { id },
+  });
+
+  res.json(category);
+}
+
+export async function deleteProductCategoryController(
+  req: Request,
+  res: Response,
+  next: Next
+) {
+  const { id } = req.params;
+
+  const categoriesRepository = getRepository(ProductCategories);
+
+  const category = await categoriesRepository.delete({
+    id,
+  });
+
+  res.json(category);
+}
+
+export async function putProductCategoryController(
   req: Request,
   res: Response,
   next: Next

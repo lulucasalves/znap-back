@@ -26,7 +26,7 @@ class MasterOrders {
   max_date!: string;
 
   @Column({ type: "varchar" })
-  order_status!: string;
+  order_status: string = "active";
 
   @ManyToOne(() => Clients, (client) => client.id)
   @JoinColumn({ name: "client_id" })

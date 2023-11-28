@@ -14,6 +14,7 @@ const typeorm_1 = require("typeorm");
 const _1 = require(".");
 let Products = class Products {
     constructor() {
+        this.available = true;
         this.updated_at = new Date();
     }
 };
