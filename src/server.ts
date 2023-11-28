@@ -3,6 +3,9 @@ import { createConnection } from "typeorm";
 
 import { typeorm } from "./typeorm";
 import { routes } from "./routes";
+import LODASH from "lodash";
+
+if (process.env.DEV !== "true") console.log(LODASH);
 
 export const server = restify.createServer({
   name: "Znap Server",

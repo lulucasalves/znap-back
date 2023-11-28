@@ -22,12 +22,18 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.server = void 0;
 const restify = __importStar(require("restify"));
 const typeorm_1 = require("typeorm");
 const typeorm_2 = require("./typeorm");
 const routes_1 = require("./routes");
+const lodash_1 = __importDefault(require("lodash"));
+if (process.env.DEV !== "true")
+    console.log(lodash_1.default);
 exports.server = restify.createServer({
     name: "Znap Server",
     version: "1.0.0",
