@@ -19,20 +19,8 @@ class Products {
   @Column({ type: "float" })
   price!: number;
 
-  @Column({ type: "int" })
-  stock!: number;
-
-  @Column({ type: "boolean" })
+  @Column({ type: "bool" })
   available: boolean = true;
-
-  @Column({ type: "float" })
-  weight!: number;
-
-  @Column({ type: "float" })
-  height!: number;
-
-  @Column({ type: "float" })
-  width!: number;
 
   @Column({
     name: "created_at",
@@ -43,9 +31,6 @@ class Products {
 
   @Column({ type: "timestamp" })
   updated_at: Date = new Date();
-
-  @Column({ type: "float" })
-  length!: number;
 
   @ManyToOne(() => ProductCategories, (category) => category.id)
   @JoinColumn({ name: "category_id" })

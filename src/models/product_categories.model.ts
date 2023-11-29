@@ -14,6 +14,9 @@ class ProductCategories {
   @Column({ type: "varchar", unique: true, length: 25 })
   name!: string;
 
+  @Column({ type: "bool" })
+  available: boolean = true;
+
   @Column({
     name: "created_at",
     type: "timestamp",

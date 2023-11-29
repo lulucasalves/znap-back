@@ -4,9 +4,10 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from "typeorm";
 
-import { Clients } from ".";
+import { Clients, Orders } from ".";
 
 @Entity("master_orders")
 class MasterOrders {
@@ -26,11 +27,14 @@ class MasterOrders {
   max_date!: string;
 
   @Column({ type: "varchar" })
-  order_status: string = "active";
+  order_status: string = "in progress";
 
   @ManyToOne(() => Clients, (client) => client.id)
   @JoinColumn({ name: "client_id" })
   client_id!: Clients;
+
+  @OneToMany(() => Orders, (order) => order.master_order_id)
+  orders!: Orders[];
 
   @Column({
     name: "created_at",

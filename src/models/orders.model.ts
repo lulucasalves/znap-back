@@ -14,7 +14,10 @@ class Orders {
   id!: string;
 
   @Column({ type: "int" })
-  quantity!: string;
+  quantity!: number;
+
+  @Column({ type: "float" })
+  price!: number;
 
   @ManyToOne(() => MasterOrders, (masterOrder) => masterOrder.id)
   @JoinColumn({ name: "master_order_id" })
