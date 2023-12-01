@@ -86,6 +86,8 @@ export async function deleteClientController(
   } catch (err: any) {
     res.status(400);
 
+    console.log(err)
+
     switch (true) {
       default:
         res.json({ error: true, message: "Erro ao deletar cliente" });

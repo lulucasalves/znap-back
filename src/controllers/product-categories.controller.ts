@@ -98,6 +98,9 @@ export async function deleteProductCategoryController(
     res.status(400);
 
     switch (true) {
+      case err.message !== undefined:
+        res.json({ error: true, message: err.message });
+        break;
       default:
         res.json({ error: true, message: "Erro ao remover a categoria" });
         break;

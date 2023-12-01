@@ -1,6 +1,6 @@
-import { Clients } from "../../models";
+import { Clients, MasterOrders, Orders } from "../../models";
 
-import { getRepository } from "typeorm";
+import { getManager, getRepository } from "typeorm";
 
 import {
   IChangeClient,
@@ -63,12 +63,30 @@ export async function putClientService({ body, id }: IChangeClient) {
 
 export async function deleteClientService({ id }: IGetClient) {
   const clientsRepository = getRepository(Clients);
+  const masterOrdersRepository = getRepository(MasterOrders);
+  const ordersRepository = getRepository(Orders);
 
-  const deleteClient = await clientsRepository.delete({
+  const entityManager = getManager();
+
+  const [getMasterOrder] = await entityManager.query(`SELECT id FROM master_orders WHERE client_id = '${id}'`);
+
+  console.log(getMasterOrder);
+
+  if (getMasterOrder) {
+    await ordersRepository.delete({
+      master_order_id: getMasterOrder!.id as any,
+    });
+
+    await masterOrdersRepository.delete({
+      id: getMasterOrder!.id,
+    });
+  }
+
+  const deletedComponent = await clientsRepository.delete({
     id,
   });
 
-  return deleteClient;
+  return { deletedComponent };
 }
 
 export async function getClientService({ id }: IGetClient) {

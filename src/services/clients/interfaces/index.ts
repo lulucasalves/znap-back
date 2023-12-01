@@ -23,5 +23,5 @@ export interface IChangeClient {
 }
 
 export interface IGetClient {
-  id: string;
+  id: any;
 }

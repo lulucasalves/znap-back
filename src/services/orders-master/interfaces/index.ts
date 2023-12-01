@@ -15,9 +15,7 @@ export interface ICreateOrderMaster {
     shipping: string;
     client_id: any;
     date: string;
-    min_date: string;
-    max_date: string;
-    order_status: string;
+   
   };
 }
 
@@ -26,9 +24,7 @@ export interface IChangeOrderMaster {
     shipping: string;
     client_id: any;
     date: string;
-    min_date: string;
-    max_date: string;
-    order_status: string;
+  
   };
   id: string;
 }

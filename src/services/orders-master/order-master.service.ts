@@ -1,4 +1,4 @@
-import { getRepository } from "typeorm";
+import { getManager, getRepository } from "typeorm";
 import {
   IChangeOrderMaster,
   ICreateOrderMaster,
@@ -6,6 +6,8 @@ import {
   IGetOrdersMaster,
 } from "./interfaces";
 import { MasterOrders, Orders } from "../../models";
+import { format } from "date-fns";
+import { getMastersWhere } from "./utils/getMasters";
 
 export async function getMasterOrdersService({
   limit,
@@ -21,64 +23,102 @@ export async function getMasterOrdersService({
   const limitInt = parseInt(limit);
   const currentInt = parseInt(page);
 
-  const masterOrdersRepository = getRepository(MasterOrders);
+  const date = new Date();
+  const formattedDate = format(date, "yyyy-MM-dd");
 
-  const orderQuery = order ?? "mo.created_at";
+  const dateFromQuery = dateFrom ?? "0001-01-01";
+  const dateToQuery = dateTo ?? formattedDate;
+  const orderQuery = order ?? "created_at";
   const sortQuery = sort ?? "DESC";
   const pageQuery = page ? currentInt : 1;
   const offsetQuery = limit && page ? (currentInt - 1) * limitInt : 0;
   const limitQuery = limit ? limitInt : 15;
-  const categoriesQuery = categories ? categories.split(",") : [];
-  const clientsQuery = clients ? clients.split(",") : [];
-  const productsQuery = products ? products.split(",") : [];
+  const categoriesQuery = categories
+    ? categories
+        .split(",")
+        .map((value) => `'${value}'`)
+        .join(",")
+    : "";
+  const clientsQuery = clients
+    ? clients
+        .split(",")
+        .map((value) => `'${value}'`)
+        .join(",")
+    : "";
+  const productsQuery = products
+    ? products
+        .split(",")
+        .map((value) => `'${value}'`)
+        .join(",")
+    : "";
+  const entityManager = getManager();
+  const where = getMastersWhere({
+    dateFromQuery,
+    dateToQuery,
+    clientsQuery,
+    categoriesQuery,
+    productsQuery,
+  });
 
-  let queryBuilder = masterOrdersRepository
-    .createQueryBuilder("mo")
-    .innerJoin("mo.client_id", "c")
-    // .leftJoinAndSelect("mo.orders", "orders")
-    .orderBy(orderQuery, sortQuery)
-    .limit(limitQuery)
-    .offset(offsetQuery)
-    .select(["mo", "c"])
-    .addSelect((subQuery) => {
-      return subQuery
-        .select("COUNT(*)", "count")
-        .from("orders", "o")
-        .where("o.master_order_id = mo.id");
-    }, "number_orders")
-    .addSelect((subQuery) => {
-      return subQuery
-        .select("CAST(SUM(o.quantity) AS DECIMAL)", "quantity")
-        .from("orders", "o")
-        .where("o.master_order_id = mo.id");
-    }, "total_quantity")
-    .addSelect((subQuery) => {
-      return subQuery
-        .select("CAST(SUM(price*quantity) AS DECIMAL)", "price, quantity")
-        .from("orders", "o")
-        .where("o.master_order_id = mo.id");
-    }, "total_price")
-    .addSelect((subQuery) => {
-      return subQuery
-        .select(
-          "CAST(SUM(price*quantity) AS DECIMAL) / CAST(SUM(o.quantity) AS DECIMAL)",
-          "price, quantity"
-        )
-        .from("orders", "o")
-        .where("o.master_order_id = mo.id");
-    }, "average_price");
+  let queryBuilder = await entityManager.query(
+    `
+    SELECT
+    DISTINCT(mo.id),
+    mo.shipping,
+    mo.date,
+    mo.created_at,
+    mo.updated_at,
+    CONCAT('{ "id": "', c.id, '", "name": "', c.name, '" }') AS client,
+    (
+      SELECT COUNT(*) AS count
+      FROM orders o_select
+      WHERE o_select.master_order_id = mo.id
+    ) AS number_orders,
+    (
+        SELECT CAST(SUM(o_select.quantity) AS DECIMAL) AS quantity
+        FROM orders o_select
+        WHERE o_select.master_order_id = mo.id
+    ) AS total_quantity,
+    (
+        SELECT CAST(SUM(o_select.price * o_select.quantity) AS DECIMAL)
+        FROM orders o_select
+        WHERE o_select.master_order_id = mo.id
+    ) AS total_price,
+    (
+        SELECT CAST(SUM(o_select.price * o_select.quantity) AS DECIMAL) / CAST(SUM(o_select.quantity) AS DECIMAL)
+        FROM orders o_select
+        WHERE o_select.master_order_id = mo.id
+    ) AS average_price
+    FROM master_orders as mo
+    INNER JOIN clients as c ON c.id = mo.client_id
+    INNER JOIN orders as o ON o.master_order_id = mo.id
+    INNER JOIN products as p ON o.product_id = p.id
+    ${where}
+    ORDER BY ${orderQuery} ${sortQuery}
+    LIMIT ${limitQuery}
+    OFFSET ${offsetQuery}
+    `
+  );
 
-  if (clientsQuery.length) {
-    queryBuilder.andWhere("mo.client_id IN(:clients)", {
-      clients: clientsQuery.join(","),
-    });
-  }
+  const master_orders_count_query = await entityManager.query(`
+    SELECT COUNT(DISTINCT mo.id) as count FROM master_orders as mo
+    INNER JOIN clients as c ON c.id = mo.client_id
+    INNER JOIN orders as o ON o.master_order_id = mo.id
+    INNER JOIN products as p ON o.product_id = p.id
+    ${where}
+  `);
 
-  const master_orders = await queryBuilder.getRawMany();
-  const master_orders_count = await queryBuilder.getCount();
+  const master_orders_count = parseInt(master_orders_count_query[0].count);
+
+  const data = queryBuilder.map((val: any) => {
+    return {
+      ...val,
+      client: JSON.parse(val.client),
+    };
+  });
 
   return {
-    data: master_orders,
+    data,
     count: master_orders_count,
     page: pageQuery,
     limit: limitQuery,
@@ -128,8 +168,12 @@ export async function putMasterOrdersService({ body, id }: IChangeOrderMaster) {
 
 export async function deleteMasterOrderService({ id }: IGetOrderMaster) {
   const masterOrdersRepository = getRepository(MasterOrders);
+  const ordersRepository = getRepository(Orders);
 
+  const deleteOrders = await ordersRepository.delete({
+    master_order_id: id as any,
+  });
   const deleteMasterOrder = await masterOrdersRepository.delete({ id });
 
-  return deleteMasterOrder;
+  return { deleteMasterOrder, deleteOrders };
 }

@@ -5,7 +5,7 @@ import {
   IGetProduct,
   IGetProducts,
 } from "./interfaces";
-import { Products } from "../../models";
+import { Orders, Products } from "../../models";
 
 export async function getProductsService({
   limit,
@@ -78,10 +78,15 @@ export async function putProductService({ id, body }: IChangeProduct) {
 
 export async function deleteProductService({ id }: IGetProduct) {
   const productsRepository = getRepository(Products);
+  const ordersRepository = getRepository(Orders);
+
+  const orders = await ordersRepository.delete({
+    product_id: id as any,
+  });
 
   const product = await productsRepository.delete({
     id,
   });
 
-  return product;
+  return { product, orders };
 }

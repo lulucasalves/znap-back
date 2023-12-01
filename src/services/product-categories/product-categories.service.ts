@@ -6,7 +6,7 @@ import {
   IGetProductCategory,
 } from "./interfaces";
 
-import { ProductCategories } from "../../models";
+import { Orders, ProductCategories, Products } from "../../models";
 
 export async function getProductCategoriesService({
   limit,
@@ -65,6 +65,22 @@ export async function deleteProductCategoryService({
   id,
 }: IGetProductCategory) {
   const categoriesRepository = getRepository(ProductCategories);
+
+  const productsRepository = getRepository(Products);
+
+  const categoryNoCategory = await categoriesRepository.findOne({
+    where: { name: "Sem categoria" },
+  });
+
+  if (!categoryNoCategory)
+    throw new Error("Não foi possível trocar a categoria dos produtos");
+
+  await productsRepository.update(
+    {
+      category_id: id as any,
+    },
+    { category_id: categoryNoCategory!.id as any }
+  );
 
   const category = await categoriesRepository.delete({
     id,
