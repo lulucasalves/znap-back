@@ -27,6 +27,9 @@ export async function getProductCategoriesController(
     res.status(400);
 
     switch (true) {
+      case err.message !== undefined:
+        res.json({ error: true, message: err.message });
+        break;
       default:
         res.json({ error: true, message: "Erro ao procurar as categorias" });
         break;
@@ -42,11 +45,15 @@ export async function postProductCategoryController(
   try {
     const data = await postProductCategoryService({ body: req.body });
 
+    res.status(201);
     res.json(data);
   } catch (err: any) {
     res.status(400);
 
     switch (true) {
+      case err.message !== undefined:
+        res.json({ error: true, message: err.message });
+        break;
       case err.sqlMessage && err.sqlMessage.includes("Duplicate entry"):
         res.json({ error: true, message: "Categoria duplicada" });
         break;
@@ -123,6 +130,9 @@ export async function putProductCategoryController(
     res.status(400);
 
     switch (true) {
+      case err.message !== undefined:
+        res.json({ error: true, message: err.message });
+        break;
       case err.sqlMessage && err.sqlMessage.includes("Duplicate entry"):
         res.json({ error: true, message: "Categoria duplicada" });
         break;

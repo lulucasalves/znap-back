@@ -14,15 +14,18 @@ export async function getClientsController(
   next: Next
 ) {
   try {
-    const { limit, page, order, sort } = req.query;
+    const { limit, page, order, sort, filter } = req.query;
 
-    const data = await getClientsService({ limit, sort, order, page });
+    const data = await getClientsService({ limit, sort, order, page, filter });
 
     res.json(data);
   } catch (err: any) {
     res.status(400);
 
     switch (true) {
+      case err.message !== undefined:
+        res.json({ error: true, message: err.message });
+        break;
       default:
         res.json({ error: true, message: "Erro ao procurar clientes" });
         break;
@@ -38,11 +41,15 @@ export async function postClientController(
   try {
     const data = await postClientService({ body: req.body });
 
+    res.status(201);
     res.json(data);
   } catch (err: any) {
     res.status(400);
 
     switch (true) {
+      case err.message !== undefined:
+        res.json({ error: true, message: err.message });
+        break;
       default:
         res.json({ error: true, message: "Erro ao criar cliente" });
         break;
@@ -65,6 +72,9 @@ export async function putClientController(
     res.status(400);
 
     switch (true) {
+      case err.message !== undefined:
+        res.json({ error: true, message: err.message });
+        break;
       default:
         res.json({ error: true, message: "Erro ao editar cliente" });
         break;
@@ -86,9 +96,12 @@ export async function deleteClientController(
   } catch (err: any) {
     res.status(400);
 
-    console.log(err)
+    console.log(err);
 
     switch (true) {
+      case err.message !== undefined:
+        res.json({ error: true, message: err.message });
+        break;
       default:
         res.json({ error: true, message: "Erro ao deletar cliente" });
         break;

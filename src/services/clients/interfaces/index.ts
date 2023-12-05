@@ -3,6 +3,7 @@ export interface IGetClients {
   page: string;
   order: string;
   sort: string;
+  filter: string;
 }
 
 export interface ICreateClient {

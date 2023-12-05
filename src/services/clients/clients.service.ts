@@ -1,6 +1,6 @@
 import { Clients, MasterOrders, Orders } from "../../models";
 
-import { getManager, getRepository } from "typeorm";
+import { ILike, getManager, getRepository } from "typeorm";
 
 import {
   IChangeClient,
@@ -14,6 +14,7 @@ export async function getClientsService({
   page,
   order,
   sort,
+  filter,
 }: IGetClients) {
   const limitInt = parseInt(limit);
   const currentInt = parseInt(page);
@@ -23,10 +24,23 @@ export async function getClientsService({
 
   const clientsRepository = getRepository(Clients);
 
+  let whereConditions = {};
+
+  if (filter) {
+    whereConditions = {
+      where: [
+        { name: ILike(`%${filter}%`) },
+        { email: ILike(`%${filter}%`) },
+        { phone: ILike(`%${filter}%`) },
+      ],
+    };
+  }
+
   const clients = await clientsRepository.findAndCount({
     skip: (pageQuery - 1) * limitQuery,
     take: limitQuery,
     order: { [order ?? "created_at"]: sort ?? "DESC" },
+    ...whereConditions,
   });
 
   return {
@@ -68,9 +82,9 @@ export async function deleteClientService({ id }: IGetClient) {
 
   const entityManager = getManager();
 
-  const [getMasterOrder] = await entityManager.query(`SELECT id FROM master_orders WHERE client_id = '${id}'`);
-
-  console.log(getMasterOrder);
+  const [getMasterOrder] = await entityManager.query(
+    `SELECT id FROM master_orders WHERE client_id = '${id}'`
+  );
 
   if (getMasterOrder) {
     await ordersRepository.delete({

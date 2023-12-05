@@ -45,6 +45,9 @@ export async function getMasterOrdersController(
     res.status(400);
     console.log(err);
     switch (true) {
+      case err.message !== undefined:
+        res.json({ error: true, message: err.message });
+        break;
       default:
         res.json({ error: true, message: "Erro ao procurar os pedidos" });
         break;
@@ -86,11 +89,15 @@ export async function postMasterOrdersController(
   try {
     const data = await postMasterOrdersService({ body: req.body });
 
+    res.status(201);
     res.json(data);
   } catch (err: any) {
     res.status(400);
 
     switch (true) {
+      case err.message !== undefined:
+        res.json({ error: true, message: err.message });
+        break;
       default:
         res.json({ error: true, message: "Erro ao criar pedidos" });
         break;
@@ -113,6 +120,9 @@ export async function putMasterOrdersController(
     res.status(400);
 
     switch (true) {
+      case err.message !== undefined:
+        res.json({ error: true, message: err.message });
+        break;
       default:
         res.json({ error: true, message: "Erro ao editar os pedidos" });
         break;
@@ -135,6 +145,9 @@ export async function deleteMasterOrdersController(
     res.status(400);
 
     switch (true) {
+      case err.message !== undefined:
+        res.json({ error: true, message: err.message });
+        break;
       default:
         res.json({ error: true, message: "Erro ao deletar os pedidos" });
         break;

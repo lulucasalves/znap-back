@@ -26,6 +26,9 @@ export async function getProductsController(
     res.json(data);
   } catch (err: any) {
     switch (true) {
+      case err.message !== undefined:
+        res.json({ error: true, message: err.message });
+        break;
       default:
         res.json({ error: true, message: "Erro ao procurar produtos" });
         break;
@@ -41,11 +44,15 @@ export async function postProductController(
   try {
     const data = await postProductService({ body: req.body });
 
+    res.status(201);
     res.json(data);
   } catch (err: any) {
     res.status(400);
 
     switch (true) {
+      case err.message !== undefined:
+        res.json({ error: true, message: err.message });
+        break;
       default:
         res.json({ error: true, message: "Erro ao criar novo produto" });
         break;
@@ -94,6 +101,9 @@ export async function putProductController(
     res.status(400);
 
     switch (true) {
+      case err.message !== undefined:
+        res.json({ error: true, message: err.message });
+        break;
       default:
         res.json({ error: true, message: "Erro ao editar o produto" });
         break;
@@ -116,6 +126,9 @@ export async function deleteProductController(
     res.status(400);
 
     switch (true) {
+      case err.message !== undefined:
+        res.json({ error: true, message: err.message });
+        break;
       default:
         res.json({ error: true, message: "Erro ao remover o produto" });
         break;

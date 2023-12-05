@@ -15,11 +15,15 @@ export async function postOrderController(
   try {
     const data = await postOrderService({ body: req.body });
 
+    res.status(201);
     res.json(data);
   } catch (err: any) {
     res.status(400);
 
     switch (true) {
+      case err.message !== undefined:
+        res.json({ error: true, message: err.message });
+        break;
       default:
         res.json({ error: true, message: "Erro ao criar o pedido" });
         break;
@@ -42,6 +46,9 @@ export async function putOrderController(
     res.status(400);
 
     switch (true) {
+      case err.message !== undefined:
+        res.json({ error: true, message: err.message });
+        break;
       default:
         res.json({ error: true, message: "Erro ao editar o pedido" });
         break;
@@ -64,6 +71,9 @@ export async function deleteOrderController(
     res.status(400);
 
     switch (true) {
+      case err.message !== undefined:
+        res.json({ error: true, message: err.message });
+        break;
       default:
         res.json({ error: true, message: "Erro ao deletar o pedido" });
         break;
