@@ -1,4 +1,4 @@
-import { getRepository } from "typeorm";
+import { Equal, ILike, Not, getRepository } from "typeorm";
 import {
   IChangeProductCategory,
   ICreateProductCategory,
@@ -6,26 +6,40 @@ import {
   IGetProductCategory,
 } from "./interfaces";
 
-import { Orders, ProductCategories, Products } from "../../models";
+import { ProductCategories, Products } from "../../models";
 
 export async function getProductCategoriesService({
   limit,
   page,
   order,
   sort,
+  filter,
+  active,
 }: IGetProductCategories) {
   const limitInt = parseInt(limit);
   const currentInt = parseInt(page);
 
+  const activeQuery = active === "true" ? true : false;
   const limitQuery = limit ? limitInt : 15;
   const pageQuery = limit ? currentInt : 1;
 
   const categoriesRepository = getRepository(ProductCategories);
 
+  let where: any = { is_deletable: 1 };
+
+  if (filter) {
+    where = { ...where, name: ILike(`%${filter}%`) };
+  }
+
+  if (activeQuery) {
+    where = { ...where, available: activeQuery };
+  }
+
   const categories = await categoriesRepository.findAndCount({
     skip: (pageQuery - 1) * limitQuery,
     take: limitQuery,
     order: { [order ?? "created_at"]: sort ?? "DESC" },
+    where,
   });
 
   return {

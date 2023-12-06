@@ -43,6 +43,16 @@ export async function getProductsService({
 export async function postProductService({ body }: ICreateProduct) {
   const productsRepository = getRepository(Products);
 
+  const findDuplicated = await productsRepository.findOne({
+    where: {
+      name: body.name,
+    },
+  });
+
+  if (findDuplicated) {
+    throw new Error("Produto duplicado!");
+  }
+
   const createProduct = productsRepository.create(body);
 
   const createdProduct = await productsRepository.save(createProduct);
@@ -65,6 +75,14 @@ export async function getProductService({ id }: IGetProduct) {
 
 export async function putProductService({ id, body }: IChangeProduct) {
   const productsRepository = getRepository(Products);
+
+  const findDuplicated = await productsRepository.find({
+    where: {
+      name: body.name,
+    },
+  });
+
+  if (findDuplicated.length > 1) throw new Error("Produto duplicado!");
 
   const product = await productsRepository.update(
     {

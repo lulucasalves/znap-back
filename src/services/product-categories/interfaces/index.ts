@@ -3,6 +3,8 @@ export interface IGetProductCategories {
   page: string;
   order: string;
   sort: string;
+  filter: string;
+  active: string;
 }
 
 export interface ICreateProductCategory {

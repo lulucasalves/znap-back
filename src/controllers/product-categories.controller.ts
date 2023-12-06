@@ -13,13 +13,15 @@ export async function getProductCategoriesController(
   next: Next
 ) {
   try {
-    const { limit, page, order, sort } = req.query;
+    const { limit, page, order, sort, filter, active } = req.query;
 
     const data = await getProductCategoriesService({
       limit,
       page,
       order,
       sort,
+      filter,
+      active,
     });
 
     res.json(data);
@@ -51,11 +53,12 @@ export async function postProductCategoryController(
     res.status(400);
 
     switch (true) {
+      case (err.sqlMessage && err.sqlMessage.includes("Duplicate entry")) ||
+        err.message.includes("key"):
+        res.json({ error: true, message: "Categoria duplicada" });
+        break;
       case err.message !== undefined:
         res.json({ error: true, message: err.message });
-        break;
-      case err.sqlMessage && err.sqlMessage.includes("Duplicate entry"):
-        res.json({ error: true, message: "Categoria duplicada" });
         break;
       default:
         res.json({ error: true, message: "Erro ao criar nova categoria" });
@@ -130,11 +133,12 @@ export async function putProductCategoryController(
     res.status(400);
 
     switch (true) {
+      case (err.sqlMessage && err.sqlMessage.includes("Duplicate entry")) ||
+        err.message.includes("key"):
+        res.json({ error: true, message: "Categoria duplicada" });
+        break;
       case err.message !== undefined:
         res.json({ error: true, message: err.message });
-        break;
-      case err.sqlMessage && err.sqlMessage.includes("Duplicate entry"):
-        res.json({ error: true, message: "Categoria duplicada" });
         break;
       default:
         res.json({ error: true, message: "Erro ao editar a categoria" });

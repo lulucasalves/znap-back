@@ -17,6 +17,9 @@ class ProductCategories {
   @Column({ type: "bool" })
   available: boolean = true;
 
+  @Column({ type: "bool" })
+  is_deletable: boolean = true;
+
   @Column({
     name: "created_at",
     type: "timestamp",

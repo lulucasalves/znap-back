@@ -55,6 +55,14 @@ export async function getClientsService({
 export async function postClientService({ body }: ICreateClient) {
   const clientsRepository = getRepository(Clients);
 
+  const findDuplicated = await clientsRepository.findOne({
+    where: {
+      ...body,
+    },
+  });
+
+  if (findDuplicated) throw new Error("Cliente duplicado!");
+
   const createClient = clientsRepository.create(body);
 
   const createdClient = await clientsRepository.save(createClient);
@@ -64,6 +72,14 @@ export async function postClientService({ body }: ICreateClient) {
 
 export async function putClientService({ body, id }: IChangeClient) {
   const clientsRepository = getRepository(Clients);
+
+  const findDuplicated = await clientsRepository.findOne({
+    where: {
+      ...body,
+    },
+  });
+
+  if (findDuplicated) throw new Error("Cliente duplicado!");
 
   const editClient = await clientsRepository.update(
     {
