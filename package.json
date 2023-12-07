@@ -18,6 +18,7 @@
     "mysql2": "^3.6.5",
     "reflect-metadata": "^0.1.13",
     "restify": "^11.1.0",
+    "restify-cors-middleware2": "^2.2.1",
     "typeorm": "^0.3.17",
     "typescript": "^5.3.2",
     "uuid": "^9.0.1"
@@ -31,4 +32,3 @@
     "tsconfig-paths": "^4.2.0"
   }
 }
-
