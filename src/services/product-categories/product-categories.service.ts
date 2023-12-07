@@ -19,20 +19,20 @@ export async function getProductCategoriesService({
   const limitInt = parseInt(limit);
   const currentInt = parseInt(page);
 
-  const activeQuery = active === "true" ? true : false;
+  const activeQuery = active === "true";
   const limitQuery = limit ? limitInt : 15;
   const pageQuery = limit ? currentInt : 1;
 
   const categoriesRepository = getRepository(ProductCategories);
 
-  let where: any = { is_deletable: 1 };
+  let where = {};
+
+  if (!activeQuery) {
+    where = { ...where, is_deletable: 1 };
+  }
 
   if (filter) {
     where = { ...where, name: ILike(`%${filter}%`) };
-  }
-
-  if (activeQuery) {
-    where = { ...where, available: activeQuery };
   }
 
   const categories = await categoriesRepository.findAndCount({

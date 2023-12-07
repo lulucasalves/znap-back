@@ -90,9 +90,9 @@ export async function getMasterOrdersService({
         WHERE o_select.master_order_id = mo.id
     ) AS average_price
     FROM master_orders as mo
-    INNER JOIN clients as c ON c.id = mo.client_id
-    INNER JOIN orders as o ON o.master_order_id = mo.id
-    INNER JOIN products as p ON o.product_id = p.id
+    LEFT JOIN clients as c ON c.id = mo.client_id
+    LEFT JOIN orders as o ON o.master_order_id = mo.id
+    LEFT JOIN products as p ON o.product_id = p.id
     ${where}
     ORDER BY ${orderQuery} ${sortQuery}
     LIMIT ${limitQuery}
@@ -102,9 +102,9 @@ export async function getMasterOrdersService({
 
   const master_orders_count_query = await entityManager.query(`
     SELECT COUNT(DISTINCT mo.id) as count FROM master_orders as mo
-    INNER JOIN clients as c ON c.id = mo.client_id
-    INNER JOIN orders as o ON o.master_order_id = mo.id
-    INNER JOIN products as p ON o.product_id = p.id
+    LEFT JOIN clients as c ON c.id = mo.client_id
+    LEFT JOIN orders as o ON o.master_order_id = mo.id
+    LEFT JOIN products as p ON o.product_id = p.id
     ${where}
   `);
 
