@@ -23,7 +23,13 @@ server.use(restify.plugins.acceptParser(server.acceptable));
 server.use(restify.plugins.queryParser());
 server.use(restify.plugins.bodyParser());
 
-createConnection(typeorm);
+(async () => {
+  const connection = await createConnection(typeorm);
+  try {
+    connection.runMigrations().catch((err) => err);
+  } catch (err) {}
+})();
+
 routes(server);
 
 const PORT = process.env.PORT || 8080;

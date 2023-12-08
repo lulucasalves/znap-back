@@ -13,4 +13,5 @@ export const typeorm: ConnectionOptions = {
   synchronize: isDev ? true : false,
   logging: false,
   entities: isDev ? [`src/models/*.ts`] : [`dist/models/*.js`],
+  migrations: isDev ? [`src/migrations/*.ts`] : [`dist/migrations/*.js`],
 };

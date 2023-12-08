@@ -99,7 +99,6 @@ export async function putProductController(
     res.json(data);
   } catch (err: any) {
     res.status(400);
-
     switch (true) {
       case err.message !== undefined:
         res.json({ error: true, message: err.message });

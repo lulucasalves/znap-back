@@ -82,6 +82,8 @@ export async function putProductService({ id, body }: IChangeProduct) {
     },
   });
 
+  console.log(findDuplicated);
+
   if (findDuplicated.length > 1) throw new Error("Produto duplicado!");
 
   const product = await productsRepository.update(
