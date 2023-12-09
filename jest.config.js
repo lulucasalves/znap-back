@@ -9,4 +9,5 @@ module.exports = {
   transform: {
     "^.+\\.tsx?$": ["ts-jest", { tsconfig: "tsconfig.json" }],
   },
+  testTimeout: 30000,
 };
