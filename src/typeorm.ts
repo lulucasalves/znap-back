@@ -10,7 +10,7 @@ export const typeorm: ConnectionOptions = {
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
-  synchronize: isDev ? true : false,
+  synchronize: true,
   logging: false,
   entities: isDev ? [`src/models/*.ts`] : [`dist/models/*.js`],
   migrations: isDev ? [`src/migrations/*.ts`] : [`dist/migrations/*.js`],
