@@ -12,6 +12,10 @@ Este servidor funciona em conjunto com a aplicação [frontend](https://github.c
     git clone git@github.com:lulucasalves/znap-back.git
 ```
 
+### Configurando variaveis de ambiente
+As variáveis de ambiente serão necessárias para indicar a conexão com o banco de dados e definir se o servidor é de desenvolvimento ou não, sendo assim ao iniciar o servidor de desenvolvimento ele irá sincronizar todas suas configurações com o banco de dados.
+Renomeie os dados da .env.example para .env e altere as variaveis conforme o necessário.
+
 ### Instalando dependências
 ```bash
     npm install
