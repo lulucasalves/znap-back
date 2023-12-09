@@ -50,3 +50,12 @@ Este servidor funciona em conjunto com a aplicação [frontend](https://github.c
     # servidor em segundo plano
     docker-compose up -d
 ```
+
+### Realizando testes
+Para realizar os testes tenho certeza que a porta 8080 não esteja em uso pois os testes são via http e não influenciam na aplicação original
+```bash
+    npm run test
+```
+```bash
+    yarn test
+```
